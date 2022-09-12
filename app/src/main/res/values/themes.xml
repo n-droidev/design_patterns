@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.ABBDesignPatterns" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/purple_700</item>
+    </style>
+
+
+    <style name="Theme.Starting" parent="Theme.SplashScreen">
+        <item name="splashScreenIconSize">@dimen/splashscreen_icon_size</item>
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_animated_logo_abb</item>
+        <item name="postSplashScreenTheme">@style/Theme.ABBDesignPatterns</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:ignore="NewApi">2000</item>
+
+    </style>
+
+</resources>

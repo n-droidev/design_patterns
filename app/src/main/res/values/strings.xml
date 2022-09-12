@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Design Patterns</string>
+    <string-array name="design_pattern_types">
+        <item>Creational</item>
+        <item>Behavioral</item>
+        <item>Structural</item>
+    </string-array>
+</resources>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.SubPatternDetailsActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/purple_700"
+        app:titleTextColor="@color/white"
+        tools:title="Hello" />
+
+    <ExpandableListView
+        android:id="@+id/descriptionExpandableListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:listitem="@layout/item_pattern_content" />
+
+<!--   <LinearLayout-->
+<!--       android:layout_width="match_parent"-->
+<!--       android:orientation="horizontal"-->
+<!--       android:layout_height="wrap_content">-->
+
+<!--    <Button-->
+<!--        android:id="@+id/viewCodeExamplesBT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@color/purple_700"-->
+<!--        android:text="View Example Codes"-->
+<!--        android:textColor="@color/white" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/runExampleBT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="1"-->
+<!--        android:backgroundTint="@color/purple_700"-->
+<!--        android:text="Run Example Code"-->
+<!--        android:textColor="@color/white" />-->
+
+<!--   </LinearLayout>-->
+
+</LinearLayout>

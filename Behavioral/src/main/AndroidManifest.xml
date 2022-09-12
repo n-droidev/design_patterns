@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.n_droidev.behavioral">
+
+    <application>
+        <activity
+            android:name=".main.BehavioralActivity"
+            android:exported="false"
+            android:label="@string/title_activity_behavioral"
+            android:theme="@style/Theme.ABBDesignPatterns" />
+    </application>
+
+</manifest>

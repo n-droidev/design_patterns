@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.n_droidev.ui">
+
+    <application android:theme="@style/Theme.ABBDesignPatterns">
+        <activity
+            android:name="com.n_droidev.ui.activity.RunnableCodeExampleActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.n_droidev.ui.activity.CodeExamplesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_code_examples" />
+        <activity
+            android:name="com.n_droidev.ui.activity.SubPatternDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.n_droidev.ui.activity.SubPatternListActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.n_droidev.ui.activity.SolidDetailsActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

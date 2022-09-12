@@ -1,0 +1,633 @@
+{
+  "pattern_groups": [
+    {
+      "name": "Creational",
+      "types": [
+        {
+          "name": "Abstract Factory",
+          "code_examples": [
+            {
+              "language": "Java",
+              "example": "// class CPU\nabstract class CPU {}\n\n// class EmberCPU\nclass EmberCPU extends CPU {}\n\n// class EnginolaCPU\nclass EnginolaCPU extends CPU {}\n\n// class MMU\nabstract class MMU {}\n\n// class EmberMMU\nclass EmberMMU extends MMU {}\n\n// class EnginolaMMU\nclass EnginolaMMU extends MMU {}\n\n// class EmberFactory\nclass EmberToolkit extends AbstractFactory {\n    @Override\n    public CPU createCPU() {\n        return new EmberCPU();\n    }\n\n    @Override\n    public MMU createMMU() {\n        return new EmberMMU();\n    }\n}\n\n// class EnginolaFactory\nclass EnginolaToolkit extends AbstractFactory {\n    @Override\n    public CPU createCPU() {\n        return new EnginolaCPU();\n    }\n\n    @Override\n    public MMU createMMU() {\n        return new EnginolaMMU();\n    }\n}\n\nenum Architecture {\n    ENGINOLA, EMBER\n}\n\nabstract class AbstractFactory {\n    private static final EmberToolkit EMBER_TOOLKIT = new EmberToolkit();\n    private static final EnginolaToolkit ENGINOLA_TOOLKIT = new EnginolaToolkit();\n\n    // Returns a concrete factory object that is an instance of the\n    // concrete factory class appropriate for the given architecture.\n    static AbstractFactory getFactory(Architecture architecture) {\n        AbstractFactory factory = null;\n        switch (architecture) {\n            case ENGINOLA:\n                factory = ENGINOLA_TOOLKIT;\n                break;\n            case EMBER:\n                factory = EMBER_TOOLKIT;\n                break;\n        }\n        return factory;\n    }\n\n    public abstract CPU createCPU();\n\n    public abstract MMU createMMU();\n}\n\npublic class Client {\n    public static void main(String[] args) {\n        AbstractFactory factory = AbstractFactory.getFactory(Architecture.EMBER);\n        CPU cpu = factory.createCPU();\n    }\n}\n"
+            },
+            {
+              "language": "C++",
+              "example": "#include <iostream.h>\n\nclass Shape {\n  public:\n    Shape() {\n      id_ = total_++;\n    }\n    virtual void draw() = 0;\n  protected:\n    int id_;\n    static int total_;\n};\nint Shape::total_ = 0;\n\nclass Circle : public Shape {\n  public:\n    void draw() {\n      cout << \"circle \" << id_ << \": draw\" << endl;\n    }\n};\nclass Square : public Shape {\n  public:\n    void draw() {\n      cout << \"square \" << id_ << \": draw\" << endl;\n    }\n};\nclass Ellipse : public Shape {\n  public:\n    void draw() {\n      cout << \"ellipse \" << id_ << \": draw\" << endl;\n    }\n};\nclass Rectangle : public Shape {\n  public:\n    void draw() {\n      cout << \"rectangle \" << id_ << \": draw\" << endl;\n    }\n};\n\nclass Factory {\n  public:\n    virtual Shape* createCurvedInstance() = 0;\n    virtual Shape* createStraightInstance() = 0;\n};\n\nclass SimpleShapeFactory : public Factory {\n  public:\n    Shape* createCurvedInstance() {\n      return new Circle;\n    }\n    Shape* createStraightInstance() {\n      return new Square;\n    }\n};\nclass RobustShapeFactory : public Factory {\n  public:\n    Shape* createCurvedInstance()   {\n      return new Ellipse;\n    }\n    Shape* createStraightInstance() {\n      return new Rectangle;\n    }\n};\n\nint main() {\n#ifdef SIMPLE\n  Factory* factory = new SimpleShapeFactory;\n#elif ROBUST\n  Factory* factory = new RobustShapeFactory;\n#endif\n  Shape* shapes[3];\n\n  shapes[0] = factory->createCurvedInstance();   // shapes[0] = new Ellipse;\n  shapes[1] = factory->createStraightInstance(); // shapes[1] = new Rectangle;\n  shapes[2] = factory->createCurvedInstance();   // shapes[2] = new Ellipse;\n\n  for (int i=0; i < 3; i++) {\n    shapes[i]->draw();\n  }\n}"
+            },
+            {
+              "language": "PHP",
+              "example": "<?php\n\n/**\n * BookFactory classes\n */\nabstract class AbstractBookFactory {\n    abstract function makePHPBook();\n    abstract function makeMySQLBook();\n}\n\nclass OReillyBookFactory extends AbstractBookFactory {\n    private $context = \"OReilly\";\n    function makePHPBook() {\n        return new OReillyPHPBook;\n    }\n    function makeMySQLBook() {\n        return new OReillyMySQLBook;\n    }\n}\n\nclass SamsBookFactory extends AbstractBookFactory {\n    private $context = \"Sams\";\n    function makePHPBook() {\n        return new SamsPHPBook;\n    }\n    function makeMySQLBook() {\n        return new SamsMySQLBook;\n    }\n}\n\n/**\n * Book classes\n */\nabstract class AbstractBook {\n    abstract function getAuthor();\n    abstract function getTitle();\n}\n\nabstract class AbstractMySQLBook extends AbstractBook {\n    protected $subject = \"MySQL\";\n}\n\nclass OReillyMySQLBook extends AbstractMySQLBook {\n    private $author;\n    private $title;\n    function __construct() {\n        $this->author = 'George Reese, Randy Jay Yarger, and Tim King';\n        $this->title = 'Managing and Using MySQL';\n    }\n    function getAuthor() {\n        return $this->author;\n    }\n    function getTitle() {\n        return $this->title;\n    }\n}\n\nclass SamsMySQLBook extends AbstractMySQLBook {\n    private $author;\n    private $title;\n    function __construct() {\n        $this->author = 'Paul Dubois';\n        $this->title = 'MySQL, 3rd Edition';\n    }\n    function getAuthor() {\n        return $this->author;\n    }\n    function getTitle() {\n        return $this->title;\n    }\n}\n\nabstract class AbstractPHPBook extends AbstractBook {\n    protected $subject = \"PHP\";\n}\n\nclass OReillyPHPBook extends AbstractPHPBook {\n    private $author;\n    private $title;\n    private static $oddOrEven = 'odd';\n    function __construct()\n    {\n        //alternate between 2 books\n        if ('odd' == self::$oddOrEven) {\n            $this->author = 'Rasmus Lerdorf and Kevin Tatroe';\n            $this->title = 'Programming PHP';\n            self::$oddOrEven = 'even';\n        }\n        else {\n            $this->author = 'David Sklar and Adam Trachtenberg';\n            $this->title = 'PHP Cookbook';\n            self::$oddOrEven = 'odd';\n        }\n    }\n    function getAuthor() {\n        return $this->author;\n    }\n    function getTitle() {\n        return $this->title;\n    }\n}\n\nclass SamsPHPBook extends AbstractPHPBook {\n    private $author;\n    private $title;\n    function __construct() {\n        //alternate randomly between 2 books\n        mt_srand((double)microtime() * 10000000);\n        $rand_num = mt_rand(0, 1);\n\n        if (1 > $rand_num) {\n            $this->author = 'George Schlossnagle';\n            $this->title = 'Advanced PHP Programming';\n        }\n        else {\n            $this->author = 'Christian Wenz';\n            $this->title = 'PHP Phrasebook';\n        }\n    }\n    function getAuthor() {\n        return $this->author;\n    }\n    function getTitle() {\n        return $this->title;\n    }\n}\n\n/**\n * Initialization\n */\n\n  writeln('BEGIN TESTING ABSTRACT FACTORY PATTERN');\n  writeln('');\n\n  writeln('testing OReillyBookFactory');\n  $bookFactoryInstance = new OReillyBookFactory;\n  testConcreteFactory($bookFactoryInstance);\n  writeln('');\n\n  writeln('testing SamsBookFactory');\n  $bookFactoryInstance = new SamsBookFactory;\n  testConcreteFactory($bookFactoryInstance);\n\n  writeln(\"END TESTING ABSTRACT FACTORY PATTERN\");\n  writeln('');\n\n  function testConcreteFactory($bookFactoryInstance)\n  {\n      $phpBookOne = $bookFactoryInstance->makePHPBook();\n      writeln('first php Author: '.$phpBookOne->getAuthor());\n      writeln('first php Title: '.$phpBookOne->getTitle());\n\n      $phpBookTwo = $bookFactoryInstance->makePHPBook();\n      writeln('second php Author: '.$phpBookTwo->getAuthor());\n      writeln('second php Title: '.$phpBookTwo->getTitle());\n\n      $mySqlBook = $bookFactoryInstance->makeMySQLBook();\n      writeln('MySQL Author: '.$mySqlBook->getAuthor());\n      writeln('MySQL Title: '.$mySqlBook->getTitle());\n  }\n\n  function writeln($line_in) {\n    echo $line_in.\"<br/>\";\n  }\n\n?>"
+            },
+            {
+              "language": "Delphi",
+              "example": "TOAbstractFactory = class(TObject)\n  public\n    constructor Create;\n    destructor Destroy; override;\n \n    //abstract widget constructors\n    function CreateSpeedButton(AOwner: TComponent): TSpeedButton; virtual; abstract;\n    function CreateEdit(AOwner: TComponent): TEdit; virtual; abstract;\n    function CreateLabel(AOwner: TComponent): TLabel; virtual; abstract;\n  end;\n//TORedFactory and TOBlueFactory override the abstract interface to support different widget styles.\n\nTORedFactory = class(TOAbstractFactory)\n  public\n    //concrete widget constructors\n    function CreateSpeedButton(AOwner: TComponent): TSpeedButton; override;\n    function CreateEdit(AOwner: TComponent): TEdit; override;\n    function CreateLabel(AOwner: TComponent): TLabel; override;\n  end;\n\nTOBlueFactory = class(TOAbstractFactory)\n  public\n    //concrete widget constructors\n    function CreateSpeedButton(AOwner: TComponent): TSpeedButton; override;\n    function CreateEdit(AOwner: TComponent): TEdit; override;\n    function CreateLabel(AOwner: TComponent): TLabel; override;\n  end;"
+            },
+            {
+              "language": "Python",
+              "example": "\"\"\"\nProvide an interface for creating families of related or dependent\nobjects without specifying their concrete classes.\n\"\"\"\n\nimport abc\n\n\nclass AbstractFactory(metaclass=abc.ABCMeta):\n    \"\"\"\n    Declare an interface for operations that create abstract product\n    objects.\n    \"\"\"\n\n    @abc.abstractmethod\n    def create_product_a(self):\n        pass\n\n    @abc.abstractmethod\n    def create_product_b(self):\n        pass\n\n\nclass ConcreteFactory1(AbstractFactory):\n    \"\"\"\n    Implement the operations to create concrete product objects.\n    \"\"\"\n\n    def create_product_a(self):\n        return ConcreteProductA1()\n\n    def create_product_b(self):\n        return ConcreteProductB1()\n\n\nclass ConcreteFactory2(AbstractFactory):\n    \"\"\"\n    Implement the operations to create concrete product objects.\n    \"\"\"\n\n    def create_product_a(self):\n        return ConcreteProductA2()\n\n    def create_product_b(self):\n        return ConcreteProductB2()\n\n\nclass AbstractProductA(metaclass=abc.ABCMeta):\n    \"\"\"\n    Declare an interface for a type of product object.\n    \"\"\"\n\n    @abc.abstractmethod\n    def interface_a(self):\n        pass\n\n\nclass ConcreteProductA1(AbstractProductA):\n    \"\"\"\n    Define a product object to be created by the corresponding concrete\n    factory.\n    Implement the AbstractProduct interface.\n    \"\"\"\n\n    def interface_a(self):\n        pass\n\n\nclass ConcreteProductA2(AbstractProductA):\n    \"\"\"\n    Define a product object to be created by the corresponding concrete\n    factory.\n    Implement the AbstractProduct interface.\n    \"\"\"\n\n    def interface_a(self):\n        pass\n\n\nclass AbstractProductB(metaclass=abc.ABCMeta):\n    \"\"\"\n    Declare an interface for a type of product object.\n    \"\"\"\n\n    @abc.abstractmethod\n    def interface_b(self):\n        pass\n\n\nclass ConcreteProductB1(AbstractProductB):\n    \"\"\"\n    Define a product object to be created by the corresponding concrete\n    factory.\n    Implement the AbstractProduct interface.\n    \"\"\"\n\n    def interface_b(self):\n        pass\n\n\nclass ConcreteProductB2(AbstractProductB):\n    \"\"\"\n    Define a product object to be created by the corresponding concrete\n    factory.\n    Implement the AbstractProduct interface.\n    \"\"\"\n\n    def interface_b(self):\n        pass\n\n\ndef main():\n    for factory in (ConcreteFactory1(), ConcreteFactory2()):\n        product_a = factory.create_product_a()\n        product_b = factory.create_product_b()\n        product_a.interface_a()\n        product_b.interface_b()\n\n\nif __name__ == \"__main__\":\n    main()"
+            }
+          ],
+          "desc": [
+            {
+              "name": "Intent",
+              "content": "Provide an interface for creating families of related or dependent objects without specifying their concrete classes.\nA hierarchy that encapsulates: many possible \"platforms\", and the construction of a suite of \"products\".\nThe new operator considered harmful."
+            },
+            {
+              "name": "Problem",
+              "content": "If an application is to be portable, it needs to encapsulate platform dependencies. These \"platforms\" might include: windowing system, operating system, database, etc. Too often, this encapsulation is not engineered in advance, and lots of #ifdef case statements with options for all currently supported platforms begin to procreate like rabbits throughout the code."
+            },
+            {
+              "name": "Discussion",
+              "content": "Provide a level of indirection that abstracts the creation of families of related or dependent objects without directly specifying their concrete classes. The \"factory\" object has the responsibility for providing creation services for the entire platform family. Clients never create platform objects directly, they ask the factory to do that for them.\n\nThis mechanism makes exchanging product families easy because the specific class of the factory object appears only once in the application - where it is instantiated. The application can wholesale replace the entire family of products simply by instantiating a different concrete instance of the abstract factory.\n\nBecause the service provided by the factory object is so pervasive, it is routinely implemented as a Singleton."
+            },
+            {
+              "name": "Structure",
+              "content": "The Abstract Factory defines a Factory Method per product. Each Factory Method encapsulates the new operator and the concrete, platform-specific, product classes. Each \"platform\" is then modeled with a Factory derived class."
+            },
+            {
+              "name": "Example",
+              "content": "The purpose of the Abstract Factory is to provide an interface for creating families of related objects, without specifying concrete classes. This pattern is found in the sheet metal stamping equipment used in the manufacture of Japanese automobiles. The stamping equipment is an Abstract Factory which creates auto body parts. The same machinery is used to stamp right hand doors, left hand doors, right front fenders, left front fenders, hoods, etc. for different models of cars. Through the use of rollers to change the stamping dies, the concrete classes produced by the machinery can be changed within three minutes."
+            },
+            {
+              "name": "Check list",
+              "content": "1. Decide if \"platform independence\" and creation services are the current source of pain.\n2. Map out a matrix of \"platforms\" versus \"products\".\n3. Define a factory interface that consists of a factory method per product.\n4. Define a factory derived class for each platform that encapsulates all references to the new operator.\n5. The client should retire all references to new, and use the factory methods to create the product objects.\n"
+            },
+            {
+              "name": "Rules of thumb",
+              "content": "Sometimes creational patterns are competitors: there are cases when either Prototype or Abstract Factory could be used profitably. At other times they are complementary: Abstract Factory might store a set of Prototypes from which to clone and return product objects, Builder can use one of the other patterns to implement which components get built. Abstract Factory, Builder, and Prototype can use Singleton in their implementation.\nAbstract Factory, Builder, and Prototype define a factory object that's responsible for knowing and creating the class of product objects, and make it a parameter of the system. Abstract Factory has the factory object producing objects of several classes. Builder has the factory object building a complex product incrementally using a correspondingly complex protocol. Prototype has the factory object (aka prototype) building a product by copying a prototype object.\nAbstract Factory classes are often implemented with Factory Methods, but they can also be implemented using Prototype.\nAbstract Factory can be used as an alternative to Facade to hide platform-specific classes.\nBuilder focuses on constructing a complex object step by step. Abstract Factory emphasizes a family of product objects (either simple or complex). Builder returns the product as a final step, but as far as the Abstract Factory is concerned, the product gets returned immediately.\nOften, designs start out using Factory Method (less complicated, more customizable, subclasses proliferate) and evolve toward Abstract Factory, Prototype, or Builder (more flexible, more complex) as the designer discovers where more flexibility is needed."
+            }
+          ]
+        },
+        {
+          "name": "Builder",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": "Separate the construction of a complex object from its representation so that the same construction process can create different representations.\nParse a complex representation, create one of several targets."
+            },
+            {
+              "name": "Problem",
+              "content": "An application needs to create the elements of a complex aggregate. The specification for the aggregate exists on secondary storage and one of many representations needs to be built in primary storage."
+            },
+            {
+              "name": "Discussion",
+              "content": "Separate the algorithm for interpreting (i.e. reading and parsing) a stored persistence mechanism (e.g. RTF files) from the algorithm for building and representing one of many target products (e.g. ASCII, TeX, text widget). The focus/distinction is on creating complex aggregates.\n\nThe \"director\" invokes \"builder\" services as it interprets the external format. The \"builder\" creates part of the complex object each time it is called and maintains all intermediate state. When the product is finished, the client retrieves the result from the \"builder\".\n\nAffords finer control over the construction process. Unlike creational patterns that construct products in one shot, the Builder pattern constructs the product step by step under the control of the \"director\"."
+            },
+            {
+              "name": "Structure",
+              "content": "The Reader encapsulates the parsing of the common input. The Builder hierarchy makes possible the polymorphic creation of many peculiar representations or targets."
+            },
+            {
+              "name": "Example",
+              "content": "The Builder pattern separates the construction of a complex object from its representation so that the same construction process can create different representations. This pattern is used by fast food restaurants to construct children's meals. Children's meals typically consist of a main item, a side item, a drink, and a toy (e.g., a hamburger, fries, Coke, and toy dinosaur). Note that there can be variation in the content of the children's meal, but the construction process is the same. Whether a customer orders a hamburger, cheeseburger, or chicken, the process is the same. The employee at the counter directs the crew to assemble a main item, side item, and toy. These items are then placed in a bag. The drink is placed in a cup and remains outside of the bag. This same process is used at competing restaurants."
+            },
+            {
+              "name": "Check list",
+              "content": "Decide if a common input and many possible representations (or outputs) is the problem at hand.\nEncapsulate the parsing of the common input in a Reader class.\nDesign a standard protocol for creating all possible output representations. Capture the steps of this protocol in a Builder interface.\nDefine a Builder derived class for each target representation.\nThe client creates a Reader object and a Builder object, and registers the latter with the former.\nThe client asks the Reader to \"construct\".\nThe client asks the Builder to return the result."
+            },
+            {
+              "name": "Rules of thumb",
+              "content": "Sometimes creational patterns are complementary: Builder can use one of the other patterns to implement which components get built. Abstract Factory, Builder, and Prototype can use Singleton in their implementations.\nBuilder focuses on constructing a complex object step by step. Abstract Factory emphasizes a family of product objects (either simple or complex). Builder returns the product as a final step, but as far as the Abstract Factory is concerned, the product gets returned immediately.\nBuilder often builds a Composite.\nOften, designs start out using Factory Method (less complicated, more customizable, subclasses proliferate) and evolve toward Abstract Factory, Prototype, or Builder (more flexible, more complex) as the designer discovers where more flexibility is needed."
+            }
+          ]
+        },
+        {
+          "name": "Factory",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": "Define an interface for creating an object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.\nDefining a \"virtual\" constructor.\nThe new operator considered harmful."
+            },
+            {
+              "name": "Problem",
+              "content": "A framework needs to standardize the architectural model for a range of applications, but allow for individual applications to define their own domain objects and provide for their instantiation."
+            },
+            {
+              "name": "Discussion",
+              "content": "Factory Method is to creating objects as Template Method is to implementing an algorithm. A superclass specifies all standard and generic behavior (using pure virtual \"placeholders\" for creation steps), and then delegates the creation details to subclasses that are supplied by the client.\n\nFactory Method makes a design more customizable and only a little more complicated. Other design patterns require new classes, whereas Factory Method only requires a new operation.\n\nPeople often use Factory Method as the standard way to create objects; but it isn't necessary if: the class that's instantiated never changes, or instantiation takes place in an operation that subclasses can easily override (such as an initialization operation).\n\nFactory Method is similar to Abstract Factory but without the emphasis on families.\n\nFactory Methods are routinely specified by an architectural framework, and then implemented by the user of the Factory Method is to creating objects as Template Method is to implementing an algorithm. A superclass specifies all standard and generic behavior (using pure virtual \"placeholders\" for creation steps), and then delegates the creation details to subclasses that are supplied by the client.\n\nFactory Method makes a design more customizable and only a little more complicated. Other design patterns require new classes, whereas Factory Method only requires a new operation.\n\nPeople often use Factory Method as the standard way to create objects; but it isn't necessary if: the class that's instantiated never changes, or instantiation takes place in an operation that subclasses can easily override (such as an initialization operation).\n\nFactory Method is similar to Abstract Factory but without the emphasis on families.\n\nFactory Methods are routinely specified by an architectural framework, and then implemented by the user of the framework."
+            },
+            {
+              "name": "Structure",
+              "content": "The implementation of Factory Method discussed in the Gang of Four (below) largely overlaps with that of Abstract Factory. For that reason, the presentation in this chapter focuses on the approach that has become popular since.\n\nScheme of Factory Method\n\nAn increasingly popular definition of factory method is: a static method of a class that returns an object of that class' type. But unlike a constructor, the actual object it returns might be an instance of a subclass. Unlike a constructor, an existing object might be reused, instead of a new object created. Unlike a constructor, factory methods can have different and more descriptive names (e.g. Color.make_RGB_color(float red, float green, float blue) and Color.make_HSB_color(float hue, float saturation, float brightness)\n\nScheme of Factory Method\n\nThe client is totally decoupled from the implementation details of derived classes. Polymorphic creation is now possible."
+            },
+            {
+              "name": "Example",
+              "content": "The Factory Method defines an interface for creating objects, but lets subclasses decide which classes to instantiate. Injection molding presses demonstrate this pattern. Manufacturers of plastic toys process plastic molding powder, and inject the plastic into molds of the desired shapes. The class of toy (car, action figure, etc.) is determined by the mold."
+            },
+            {
+              "name": "Check list",
+              "content": "If you have an inheritance hierarchy that exercises polymorphism, consider adding a polymorphic creation capability by defining a static factory method in the base class.\nDesign the arguments to the factory method. What qualities or characteristics are necessary and sufficient to identify the correct derived class to instantiate?\nConsider designing an internal \"object pool\" that will allow objects to be reused instead of created from scratch.\nConsider making all constructors private or protected."
+            },
+            {
+              "name": "Rules of thumb",
+              "content": "Abstract Factory classes are often implemented with Factory Methods, but they can be implemented using Prototype.\nFactory Methods are usually called within Template Methods.\nFactory Method: creation through inheritance. Prototype: creation through delegation.\nOften, designs start out using Factory Method (less complicated, more customizable, subclasses proliferate) and evolve toward Abstract Factory, Prototype, or Builder (more flexible, more complex) as the designer discovers where more flexibility is needed.\nPrototype doesn't require subclassing, but it does require an Initialize operation. Factory Method requires subclassing, but doesn't require Initialize.\nThe advantage of a Factory Method is that it can return the same instance multiple times, or can return a subclass rather than an object of that exact type.\nSome Factory Method advocates recommend that as a matter of language design (or failing that, as a matter of style) absolutely all constructors should be private or protected. It's no one else's business whether a class manufactures a new object or recycles an old one.\nThe new operator considered harmful. There is a difference between requesting an object and creating one. The new operator always creates an object, and fails to encapsulate object creation. A Factory Method enforces that encapsulation, and allows an object to be requested without inextricable coupling to the act of creation."
+            }
+          ]
+        },
+        {
+          "name": "Object Pool",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": "Object pooling can offer a significant performance boost; it is most effective in situations where the cost of initializing a class instance is high, the rate of instantiation of a class is high, and the number of instantiations in use at any one time is low."
+            },
+            {
+              "name": "Problem",
+              "content": "Object pools (otherwise known as resource pools) are used to manage the object caching. A client with access to a Object pool can avoid creating a new Objects by simply asking the pool for one that has already been instantiated instead. Generally the pool will be a growing pool, i.e. the pool itself will create new objects if the pool is empty, or we can have a pool, which restricts the number of objects created.\n\nIt is desirable to keep all Reusable objects that are not currently in use in the same object pool so that they can be managed by one coherent policy. To achieve this, the Reusable Pool class is designed to be a singleton class."
+            },
+            {
+              "name": "Discussion",
+              "content": "The Object Pool lets others \"check out\" objects from its pool, when those objects are no longer needed by their processes, they are returned to the pool in order to be reused.\n\nHowever, we don't want a process to have to wait for a particular object to be released, so the Object Pool also instantiates new objects as they are required, but must also implement a facility to clean up unused objects periodically."
+            },
+            {
+              "name": "Structure",
+              "content": "The general idea for the Connection Pool pattern is that if instances of a class can be reused, you avoid creating instances of the class by reusing them.\n\nObject Pool scheme\n\nReusable - Instances of classes in this role collaborate with other objects for a limited amount of time, then they are no longer needed for that collaboration.\nClient - Instances of classes in this role use Reusable objects.\nReusablePool - Instances of classes in this role manage Reusable objects for use by Client objects.\nUsually, it is desirable to keep all Reusable objects that are not currently in use in the same object pool so that they can be managed by one coherent policy. To achieve this, the ReusablePool class is designed to be a singleton class. Its constructor(s) are private, which forces other classes to call its getInstance method to get the one instance of the ReusablePool class.\n\nA Client object calls a ReusablePool object's acquireReusable method when it needs a Reusable object. A ReusablePool object maintains a collection of Reusable objects. It uses the collection of Reusable objects to contain a pool of Reusable objects that are not currently in use.\n\nIf there are any Reusable objects in the pool when the acquireReusable method is called, it removes a Reusable object from the pool and returns it. If the pool is empty, then the acquireReusable method creates a Reusable object if it can. If the acquireReusable method cannot create a new Reusable object, then it waits until a Reusable object is returned to the collection.\n\nClient objects pass a Reusable object to a ReusablePool object's releaseReusable method when they are finished with the object. The releaseReusable method returns a Reusable object to the pool of Reusable objects that are not in use.\n\nIn many applications of the Object Pool pattern, there are reasons for limiting the total number of Reusable objects that may exist. In such cases, the ReusablePool object that creates Reusable objects is responsible for not creating more than a specified maximum number of Reusable objects. If ReusablePool objects are responsible for limiting the number of objects they will create, then the ReusablePool class will have a method for specifying the maximum number of objects to be created. That method is indicated in the above diagram as setMaxPoolSize."
+            },
+            {
+              "name": "Example",
+              "content": "Object pool pattern is similar to an office warehouse. When a new employee is hired, office manager has to prepare a work space for him. She figures whether or not there's a spare equipment in the office warehouse. If so, she uses it. If not, she places an order to purchase new equipment from Amazon. In case if an employee is fired, his equipment is moved to warehouse, where it could be taken when new work place will be needed."
+            },
+            {
+              "name": "Check list",
+              "content": "Create ObjectPool class with private array of Objects inside\nCreate acquire and release methods in ObjectPool class\nMake sure that your ObjectPool is Singleton"
+            },
+            {
+              "name": "Rules of thumb",
+              "content": "The Factory Method pattern can be used to encapsulate the creation logic for objects. However, it does not manage them after their creation, the object pool pattern keeps track of the objects it creates.\nObject Pools are usually implemented as Singletons."
+            }
+          ]
+        },
+        {
+          "name": "Prototype",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": "Specify the kinds of objects to create using a prototypical instance, and create new objects by copying this prototype.\nCo-opt one instance of a class for use as a breeder of all future instances.\nThe new operator considered harmful."
+            },
+            {
+              "name": "Problem",
+              "content": "Application \"hard wires\" the class of object to create in each \"new\" expression."
+            },
+            {
+              "name": "Discussion",
+              "content": "Declare an abstract base class that specifies a pure virtual \"clone\" method, and, maintains a dictionary of all \"cloneable\" concrete derived classes. Any class that needs a \"polymorphic constructor\" capability: derives itself from the abstract base class, registers its prototypical instance, and implements the clone() operation.\n\nThe client then, instead of writing code that invokes the \"new\" operator on a hard-wired class name, calls a \"clone\" operation on the abstract base class, supplying a string or enumerated data type that designates the particular concrete derived class desired."
+            },
+            {
+              "name": "Structure",
+              "content": "The Factory knows how to find the correct Prototype, and each Product knows how to spawn new instances of itself."
+            },
+            {
+              "name": "Example",
+              "content": "The Prototype pattern specifies the kind of objects to create using a prototypical instance. Prototypes of new products are often built prior to full production, but in this example, the prototype is passive and does not participate in copying itself. The mitotic division of a cell - resulting in two identical cells - is an example of a prototype that plays an active role in copying itself and thus, demonstrates the Prototype pattern. When a cell splits, two cells of identical genotype result. In other words, the cell clones itself."
+            },
+            {
+              "name": "Check list",
+              "content": "Add a clone() method to the existing \"product\" hierarchy.\nDesign a \"registry\" that maintains a cache of prototypical objects. The registry could be encapsulated in a new Factory class, or in the base class of the \"product\" hierarchy.\nDesign a factory method that: may (or may not) accept arguments, finds the correct prototype object, calls clone() on that object, and returns the result.\nThe client replaces all references to the new operator with calls to the factory method."
+            },
+            {
+              "name": "Rules of thumb",
+              "content": "Sometimes creational patterns are competitors: there are cases when either Prototype or Abstract Factory could be used properly. At other times they are complementary: Abstract Factory might store a set of Prototypes from which to clone and return product objects. Abstract Factory, Builder, and Prototype can use Singleton in their implementations.\nAbstract Factory classes are often implemented with Factory Methods, but they can be implemented using Prototype.\nFactory Method: creation through inheritance. Prototype: creation through delegation.\nOften, designs start out using Factory Method (less complicated, more customizable, subclasses proliferate) and evolve toward Abstract Factory, Prototype, or Builder (more flexible, more complex) as the designer discovers where more flexibility is needed.\nPrototype doesn't require subclassing, but it does require an \"initialize\" operation. Factory Method requires subclassing, but doesn't require Initialize.\nDesigns that make heavy use of the Composite and Decorator patterns often can benefit from Prototype as well.\nPrototype co-opts one instance of a class for use as a breeder of all future instances.\nPrototypes are useful when object initialization is expensive, and you anticipate few variations on the initialization parameters. In this context, Prototype can avoid expensive \"creation from scratch\", and support cheap cloning of a pre-initialized prototype.\nPrototype is unique among the other creational patterns in that it doesn't require a class – only an object. Object-oriented languages like Self and Omega that do away with classes completely rely on prototypes for creating new objects."
+            }
+          ]
+        },
+        {
+          "name": "Singleton",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": "Ensure a class has only one instance, and provide a global point of access to it.\nEncapsulated \"just-in-time initialization\" or \"initialization on first use\"."
+            },
+            {
+              "name": "Problem",
+              "content": "Application needs one, and only one, instance of an object. Additionally, lazy initialization and global access are necessary."
+            },
+            {
+              "name": "Discussion",
+              "content": "Make the class of the single instance object responsible for creation, initialization, access, and enforcement. Declare the instance as a private static data member. Provide a public static member function that encapsulates all initialization code, and provides access to the instance.\n\nThe client calls the accessor function (using the class name and scope resolution operator) whenever a reference to the single instance is required.\n\nSingleton should be considered only if all three of the following criteria are satisfied:\n\nOwnership of the single instance cannot be reasonably assigned\nLazy initialization is desirable\nGlobal access is not otherwise provided for\nIf ownership of the single instance, when and how initialization occurs, and global access are not issues, Singleton is not sufficiently interesting.\n\nThe Singleton pattern can be extended to support access to an application-specific number of instances.\n\nThe \"static member function accessor\" approach will not support subclassing of the Singleton class. If subclassing is desired, refer to the discussion in the book.\n\nDeleting a Singleton class/instance is a non-trivial design problem. See \"To Kill A Singleton\" by John Vlissides for a discussion."
+            },
+            {
+              "name": "Structure",
+              "content": "Make the class of the single instance responsible for access and \"initialization on first use\". The single instance is a private static attribute. The accessor function is a public static method."
+            },
+            {
+              "name": "Example",
+              "content": "The Singleton pattern ensures that a class has only one instance and provides a global point of access to that instance. It is named after the singleton set, which is defined to be a set containing one element. The office of the President of the United States is a Singleton. The United States Constitution specifies the means by which a president is elected, limits the term of office, and defines the order of succession. As a result, there can be at most one active president at any given time. Regardless of the personal identity of the active president, the title, \"The President of the United States\" is a global point of access that identifies the person in the office."
+            },
+            {
+              "name": "Check list",
+              "content": "Define a private static attribute in the \"single instance\" class.\nDefine a public static accessor function in the class.\nDo \"lazy initialization\" (creation on first use) in the accessor function.\nDefine all constructors to be protected or private.\nClients may only use the accessor function to manipulate the Singleton."
+            },
+            {
+              "name": "Rules of thumb",
+              "content": "Abstract Factory, Builder, and Prototype can use Singleton in their implementation.\nFacade objects are often Singletons because only one Facade object is required.\nState objects are often Singletons.\nThe advantage of Singleton over global variables is that you are absolutely sure of the number of instances when you use Singleton, and, you can change your mind and manage any number of instances.\nThe Singleton design pattern is one of the most inappropriately used patterns. Singletons are intended to be used when a class must have exactly one instance, no more, no less. Designers frequently use Singletons in a misguided attempt to replace global variables. A Singleton is, for intents and purposes, a global variable. The Singleton does not do away with the global; it merely renames it.\nWhen is Singleton unnecessary? Short answer: most of the time. Long answer: when it's simpler to pass an object resource as a reference to the objects that need it, rather than letting objects access the resource globally. The real problem with Singletons is that they give you such a good excuse not to think carefully about the appropriate visibility of an object. Finding the right balance of exposure and protection for an object is critical for maintaining flexibility.\nOur group had a bad habit of using global data, so I did a study group on Singleton. The next thing I know Singletons appeared everywhere and none of the problems related to global data went away. The answer to the global data question is not, \"Make it a Singleton.\" The answer is, \"Why in the hell are you using global data?\" Changing the name doesn't change the problem. In fact, it may make it worse because it gives you the opportunity to say, \"Well I'm not doing that, I'm doing this\" – even though this and that are the same thing."
+            }
+          ]
+        }
+      ]
+    },{
+      "name": "Structural",
+      "types": [
+        {
+          "name": "Non",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Builder",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Factory",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Object Pool",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Prototype",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Singleton",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        }
+      ]
+    },{
+      "name": "Behavioral",
+      "types": [
+        {
+          "name": "Non",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Builder",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Factory",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Object Pool",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Prototype",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        },
+        {
+          "name": "Singleton",
+          "desc": [
+            {
+              "name": "Intent",
+              "content": ""
+            },
+            {
+              "name": "Problem",
+              "content": ""
+            },
+            {
+              "name": "Discussion",
+              "content": ""
+            },
+            {
+              "name": "Structure",
+              "content": ""
+            },
+            {
+              "name": "Example",
+              "content": ""
+            },
+            {
+              "name": "Check list",
+              "content": ""
+            },
+            {
+              "name": "Rules of thumb",
+              "content": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
